@@ -1,0 +1,30 @@
+{
+  "name": "zrx",
+  "version": "0.1.0",
+  "description": "A reactive client for Zetta.",
+  "main": "zrx.js",
+  "dependencies": {
+    "siren": "~0.1.0",
+    "rx": "~2.3.20"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "zetta",
+    "client",
+    "reactive",
+    "hypermedia"
+  ],
+  "author": "Kevin Swiber <kswiber@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zettajs/zrx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zettajs/zrx/issues"
+  },
+  "homepage": "https://github.com/zettajs/zrx"
+}
