@@ -7,16 +7,20 @@ var Zrx = module.exports = function(current) {
   }
 
   this.client = siren(current);
+  this.root = null;
 };
 
 Zrx.prototype.load = function(uri) {
+  this.root = uri;
   this.client.load(uri);
   return this;
 };
 
 Zrx.prototype.server = function(name) {
-  this.client.link('http://rels.zettajs.io/peer', name);
-  return this;
+  var server = this.client.link('http://rels.zettajs.io/server', name);
+  var peer = siren().load(this.root).link('http://rels.zettajs.io/peer', name);
+
+  return new Zrx(server.merge(peer));
 };
 
 Zrx.prototype.device = function(filter) {
