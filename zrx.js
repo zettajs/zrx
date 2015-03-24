@@ -1,3 +1,4 @@
+var Rx = require('rx');
 var siren = require('siren');
 var Device = require('./device');
 
@@ -16,17 +17,34 @@ Zrx.prototype.load = function(uri) {
   return this;
 };
 
-Zrx.prototype.server = function(name) {
-  var server = this.client.link('http://rels.zettajs.io/server', name);
+Zrx.prototype.server =
+Zrx.prototype.servers =
+Zrx.prototype.peer =
+Zrx.prototype.peers = function(name) {
+  var server = this.client
+    .link('http://rels.zettajs.io/server', name)
+    .catch(Rx.Observable.empty());
+
   var peer = siren().load(this.root).link('http://rels.zettajs.io/peer', name);
 
   return new Zrx(server.merge(peer));
 };
 
-Zrx.prototype.device = function(filter) {
+Zrx.prototype.query = function(ql) {
+  return this.transition('query-devices', function(t) {
+    t.set('ql', ql);
+    return t.submit();
+  }).devices();
+};
+
+Zrx.prototype.device = Zrx.prototype.devices = function(filter) {
   this.client.entity(function(entity) {
     var device = new Device(entity);
-    return filter(device);
+    if (!filter) {
+      return device;
+    } else {
+      return filter(device);
+    }
   });
 
   return this;
@@ -46,10 +64,12 @@ Zrx.prototype.transition = function(name, cb) {
   return this;
 };
 
+// binary streams are not yet supported
 Zrx.prototype.stream = function(name) {
   this.client
     .link('http://rels.zettajs.io/object-stream', name)
-    .monitor();
+    .monitor()
+    .map(JSON.parse);
 
   return this;
 };

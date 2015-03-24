@@ -1,11 +1,11 @@
 {
   "name": "zrx",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A reactive client for Zetta.",
   "main": "zrx.js",
   "dependencies": {
-    "siren": "~0.1.0",
-    "rx": "~2.3.20"
+    "rx": "^2.4.6",
+    "siren": "~0.3.0"
   },
   "devDependencies": {},
   "scripts": {
