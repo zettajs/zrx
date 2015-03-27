@@ -25,7 +25,10 @@ Zrx.prototype.peers = function(name) {
     .link('http://rels.zettajs.io/server', name)
     .catch(Rx.Observable.empty());
 
-  var peer = siren().load(this.root).link('http://rels.zettajs.io/peer', name);
+  var peer = siren()
+    .load(this.root)
+    .link('http://rels.zettajs.io/peer', name)
+    .catch(Rx.Observable.empty());
 
   return new Zrx(server.merge(peer));
 };
