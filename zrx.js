@@ -41,40 +41,49 @@ Zrx.prototype.query = function(ql) {
 };
 
 Zrx.prototype.device = Zrx.prototype.devices = function(filter) {
-  this.client.entity(function(entity) {
-    var device = new Device(entity);
-    if (!filter) {
-      return device;
-    } else {
-      return filter(device);
-    }
-  });
+  var client;
+  if (typeof filter === 'string') {
+    client = this.client.entity(function(entity) {
+      var device = new Device(entity);
 
-  return this;
+      return device.type === filter;
+    });
+  } else {
+    client = this.client.entity(function(entity) {
+      var device = new Device(entity);
+      if (!filter) {
+        return device;
+      } else {
+        return filter(device);
+      }
+    });
+  }
+
+  return new Zrx(client);
 };
 
 Zrx.prototype.toDevice = function() {
-  this.client
+  var client = this.client
     .map(function(env) {
       return new Device(env.response.body);
     });
 
-  return this;
+  return new Zrx(client);
 };
 
 Zrx.prototype.transition = function(name, cb) {
-  this.client.action(name, cb);
-  return this;
+  var client = this.client.action(name, cb);
+  return new Zrx(client);
 };
 
 // binary streams are not yet supported
 Zrx.prototype.stream = function(name) {
-  this.client
+  var client = this.client
     .link('http://rels.zettajs.io/object-stream', name)
     .monitor()
     .map(JSON.parse);
 
-  return this;
+  return new Zrx(client);
 };
 
 var subscriptionFns = ['subscribe', 'subscribeOnNext', 'subscribeOnError',
@@ -125,8 +134,8 @@ var operators = [
 operators.forEach(function(m) {
   Zrx.prototype[m] = function() {
     var args = Array.prototype.slice.call(arguments);
-    this.client = this.client[m].apply(this.client, args);
+    var client = this.client[m].apply(this.client, args);
 
-    return this;
+    return new Zrx(client);
   };
 });
