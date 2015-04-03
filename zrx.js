@@ -8,11 +8,9 @@ var Zrx = module.exports = function(current) {
   }
 
   this.client = siren(current);
-  this.root = null;
 };
 
 Zrx.prototype.load = function(uri) {
-  this.root = uri;
   this.client.load(uri);
   return this;
 };
@@ -21,12 +19,15 @@ Zrx.prototype.server =
 Zrx.prototype.servers =
 Zrx.prototype.peer =
 Zrx.prototype.peers = function(name) {
-  var server = this.client
+  var subject = new Rx.ReplaySubject();
+
+  this.client.subscribe(subject);
+
+  var server = siren(subject)
     .link('http://rels.zettajs.io/server', name)
     .catch(Rx.Observable.empty());
 
-  var peer = siren()
-    .load(this.root)
+  var peer = siren(subject)
     .link('http://rels.zettajs.io/peer', name)
     .catch(Rx.Observable.empty());
 
